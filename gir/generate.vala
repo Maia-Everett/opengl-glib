@@ -212,7 +212,7 @@ class Parse {
 								debug("Array argument switched to string: %s\n", argument.name);
 							} else {
 								// For Vala purposes, pretend it's an uint8 array
-								argument.type = "GLubyte*";
+								argument.type = "GLubyte";
 							}
 						}
 						

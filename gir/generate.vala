@@ -540,6 +540,7 @@ class Parse {
 					break;
 				case "GLint":
 				case "GLsizei":
+				case "GLfixed":
 					type_name = "int";
 					break;
 				case "GLuint":
@@ -583,6 +584,7 @@ class Parse {
 					continue;
 				case "GLDEBUGPROCAMD":
 				case "GLDEBUGPROCARB":
+				case "GLDEBUGPROC":
 					type_name = "int"; //TODO: write proper type
 					break;
 				case "struct _cl_event":
@@ -673,7 +675,17 @@ class Parse {
 				comment_args_str += comment_arg_str + "\n";
 			}
 			
-			var transfer = " * Returns: (transfer full):\n";
+			string transfer;
+			
+			switch (mangle_type(function.type)) {
+				case "void":
+				case "GLvoid":
+					transfer = "";
+					break;
+				default:
+					transfer = " * \n * Returns: (transfer full):\n";
+					break;
+			}
 			
 			//gtk-doc coment
 			content += ("/**\n" +

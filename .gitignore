@@ -3,6 +3,11 @@
 *.stamp
 *.in
 *.gz
+*.gir
+*.typelib
+*.vapi
+
+tmp-introspect*
 
 Makefile
 

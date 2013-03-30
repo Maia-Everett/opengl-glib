@@ -27,8 +27,8 @@ AC_SUBST([GENERATE_VALAPACKAGES])
 
 # Check for headers
 AC_PREPROC_IFELSE(
-   [AC_LANG_PROGRAM([[#include <GL/gl.h>]])],
+   [AC_LANG_PROGRAM([[#include <GL/glew.h>]])],
    [AC_MSG_RESULT([OK])],
-   [AC_MSG_FAILURE([OpenGL headers are missing])])
+   [AC_MSG_FAILURE([GLEW headers are missing])])
 
 AC_OUTPUT

@@ -203,6 +203,19 @@ class Parse {
 						} else {
 							error("Could not parse array '%s'", arg_desc[3]);
 						}
+						
+						// Special case: strings will be strings
+						if (argument.type == "GLchar" || argument.type == "GLcharARB") {
+							if (argument.flow == Argument.Flow.IN) {
+								argument.type = "GLchar*";
+								argument.address = Argument.Address.VALUE;
+								debug("Array argument switched to string: %s\n", argument.name);
+							} else {
+								// For Vala purposes, pretend it's an uint8 array
+								argument.type = "GLubyte*";
+							}
+						}
+						
 						break;
 					case "reference":
 						argument.address = Argument.Address.REFERENCE;
@@ -293,11 +306,13 @@ class Parse {
 	}
 	
 	private static string mangle_type(string type) {
-		var ret = type;
+		var ret = type.replace("GLcharARB", "GLchar");
 		
-		/*if(type.length > 2 && type.substring(0,2) == "GL") {
-			ret = type.slice(0,3).up() + type.substring(3);
-		}*/
+		if (ret == "GLchar" || (ret.length >= 7 && ret.substring(0,7) == "GLchar*")) {
+			// Conversion of GLchar to char is needed to avoid confusing vapigen.
+			// Otherwise it will generate GLchar[] instead of string
+			ret = ret.substring(2);
+		}
 		
 		return ret;
 	}
@@ -337,6 +352,7 @@ class Parse {
 							desc += desc_array[i];
 							type += type_array[i].replace("const","").strip();
 							types[desc] = type;
+							debug("Added type: %s = %s\n", desc, type);
 						}
 						
 						var basic_type = type;
@@ -353,6 +369,7 @@ class Parse {
 									break; //no functions using them
 								default:
 									basic_types.add(basic_type);
+									debug("Added basic type: %s\n", basic_type);
 									break;
 							}
 						}
@@ -596,7 +613,7 @@ class Parse {
 					error("Type '%s' not covered\n", type);
 			}
 			
-			content += "typedef %s %s;\n".printf(type_name, mangle_type(type));
+			content += "typedef %s %s;\n".printf(type_name, type);
 			
 			types_count++;
 		}
@@ -626,6 +643,9 @@ class Parse {
 						if(argument.flow == Function.Argument.Flow.IN) {
 							arg_str = "%s %s".printf(mangle_type(argument.type), argument.name);
 							comment_arg_str = " * @%s: (in):".printf(argument.name);
+						} else if(argument.flow == Function.Argument.Flow.OUT && argument.type == "GLchar*") {
+							arg_str = "%s %s".printf(mangle_type(argument.type), argument.name);
+							comment_arg_str = " * @%s: (out):".printf(argument.name);
 						} else {
 							error("Flow of value can't be out");
 						}
@@ -633,10 +653,10 @@ class Parse {
 					case Function.Argument.Address.VAR_ARRAY:
 						if(argument.flow == Function.Argument.Flow.IN) {
 							arg_str = "%s* %s".printf(mangle_type(argument.type), argument.name);
-							comment_arg_str = " * @%s: (in) (array zero-terminated=1) (allow-none):".printf(argument.name);
+							comment_arg_str = " * @%s: (in) (array) (allow-none):".printf(argument.name);
 						} else {
 							arg_str = "%s* %s".printf(mangle_type(argument.type), argument.name);
-							comment_arg_str = " * @%s: (out caller-allocates) (array zero-terminated=1):".printf(argument.name);
+							comment_arg_str = " * @%s: (out caller-allocates) (array):".printf(argument.name);
 						}
 						break;
 					case Function.Argument.Address.CONST_ARRAY:

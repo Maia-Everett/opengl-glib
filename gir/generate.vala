@@ -67,6 +67,7 @@ class Parse {
 				MatchInfo match;
 				var name = "";
 				var val = "";
+				debug("parse_member: %s\n", line);
 				
 				if(Regex.match_simple("^\\s+[0-9A-Z_]+.*=.*[Xx0-9A-F]+.*$", line)) {
 					var re_name = new Regex("[0-9A-Z_]+");
@@ -80,7 +81,7 @@ class Parse {
 						enums_member_values[name] = val;
 					}
 				} else if(Regex.match_simple("^\tuse ", line)) {
-					var re_name = new Regex(" [0-9A-Z_]+\\s*$");
+					var re_name = new Regex("\\s[0-9A-Z_]+\\s*$");
 					re_name.match(line, 0, out match);
 					name = match.fetch(0).strip();
 					//val will be added later when all enums are parsed

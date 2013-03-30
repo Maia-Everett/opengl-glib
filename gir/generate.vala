@@ -643,9 +643,6 @@ class Parse {
 						if(argument.flow == Function.Argument.Flow.IN) {
 							arg_str = "%s %s".printf(mangle_type(argument.type), argument.name);
 							comment_arg_str = " * @%s: (in):".printf(argument.name);
-						} else if(argument.flow == Function.Argument.Flow.OUT && argument.type == "GLchar*") {
-							arg_str = "%s %s".printf(mangle_type(argument.type), argument.name);
-							comment_arg_str = " * @%s: (out):".printf(argument.name);
 						} else {
 							error("Flow of value can't be out");
 						}

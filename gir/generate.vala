@@ -656,7 +656,7 @@ class Parse {
 							comment_arg_str = " * @%s: (in) (array) (allow-none):".printf(argument.name);
 						} else {
 							arg_str = "%s* %s".printf(mangle_type(argument.type), argument.name);
-							comment_arg_str = " * @%s: (out caller-allocates) (array):".printf(argument.name);
+							comment_arg_str = " * @%s: (array):".printf(argument.name);
 						}
 						break;
 					case Function.Argument.Address.CONST_ARRAY:
@@ -666,7 +666,7 @@ class Parse {
 								comment_arg_str = " * @%s: (in) (array fixed-size=%d) (allow-none):".printf(argument.name, argument.size);
 							} else {
 								arg_str = "%s* %s".printf(mangle_type(argument.type), argument.name);
-								comment_arg_str = " * @%s: (out caller-allocates) (array fixed-size=%d):".printf(argument.name, argument.size);
+								comment_arg_str = " * @%s: (array fixed-size=%d):".printf(argument.name, argument.size);
 							}
 						} else if(argument.size == 1) {
 							if(argument.flow == Function.Argument.Flow.IN) {
@@ -674,7 +674,7 @@ class Parse {
 								comment_arg_str = " * @%s: (in) (array fixed-size=%d) (allow-none):".printf(argument.name, argument.size);
 							} else {
 								arg_str = "%s* %s".printf(mangle_type(argument.type), argument.name);
-								comment_arg_str = " * @%s: (out caller-allocates) (array fixed-size=%d):".printf(argument.name, argument.size);
+								comment_arg_str = " * @%s: (array fixed-size=%d):".printf(argument.name, argument.size);
 							}
 						} else {
 							error("No size given for const length array");
